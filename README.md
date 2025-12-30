@@ -3,6 +3,7 @@
 [Faster Whisper](https://github.com/guillaumekln/faster-whisper) is designed to process audio files using various Whisper models, with options for transcription formatting, language translation and more.
 
 ---
+Forked from:
 
 [![RunPod](https://api.runpod.io/badge/runpod-workers/worker-faster_whisper)](https://www.runpod.io/console/hub/runpod-workers/worker-faster_whisper)
 
@@ -10,6 +11,7 @@
 
 ## Models
 
+- Ivrit-ai
 - tiny
 - base
 - small

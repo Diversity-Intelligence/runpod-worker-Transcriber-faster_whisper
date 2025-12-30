@@ -3,7 +3,7 @@
   "description": "Process audio files using various Whisper models, with options for transcription formatting, language translation and more.",
   "type": "serverless",
   "category": "audio",
-  "iconUrl": "https://dummyimage.com/100x100/0066ff/fff&text=FW",
+  "iconUrl": "https://d26d9gkeko5qfq.cloudfront.net/images/Dive_Icon_png.png",
   "config": {
     "runsOn": "GPU",
     "containerDiskInGb": 20,
