@@ -3,11 +3,11 @@ name: Docker Image
 on:
   push:
     branches:
-      - "main"
+      - 'main'
 
 jobs:
   docker:
-    runs-on: DO
+    runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
