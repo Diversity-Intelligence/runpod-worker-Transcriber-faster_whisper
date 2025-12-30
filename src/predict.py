@@ -28,6 +28,17 @@ AVAILABLE_MODELS = {
     "turbo",
 }
 
+# Language override configuration: maps language codes to specialized models
+# When a language in this dict is requested, the override model will be used instead
+# of the user-specified model_name. The override models use faster_whisper with
+# HuggingFace model IDs.
+LANGUAGE_OVERRIDES = {
+    "he": "ivrit-ai/whisper-large-v3-turbo-ct2",
+    # Future additions can be added here:
+    # "es": "some-spanish-model",
+    # "de": "some-german-model",
+}
+
 
 class Predictor:
     """A Predictor class for the Whisper model with lazy loading"""
@@ -69,14 +80,22 @@ class Predictor:
         """
         Run a single prediction on the model, loading/unloading models as needed.
         """
-        if model_name not in AVAILABLE_MODELS:
+        # Check for language override: if language is specified and in overrides,
+        # use the override model instead of the user-specified model_name
+        actual_model_name = model_name
+        if language and language in LANGUAGE_OVERRIDES:
+            actual_model_name = LANGUAGE_OVERRIDES[language]
+            print(f"Language override detected for '{language}': using model '{actual_model_name}' instead of '{model_name}'")
+        
+        # Validate model_name only if not using an override (override models are HuggingFace IDs)
+        if actual_model_name == model_name and model_name not in AVAILABLE_MODELS:
             raise ValueError(
                 f"Invalid model name: {model_name}. Available models are: {AVAILABLE_MODELS}"
             )
 
         with self.model_lock:
             model = None
-            if model_name not in self.models:
+            if actual_model_name not in self.models:
                 # Unload existing model if necessary
                 if self.models:
                     existing_model_name = list(self.models.keys())[0]
@@ -93,29 +112,29 @@ class Predictor:
                         pass
                     print(f"Model {existing_model_name} unloaded.")
 
-                # Load the requested model
-                print(f"Loading model: {model_name}...")
+                # Load the requested model (supports both standard model names and HuggingFace IDs)
+                print(f"Loading model: {actual_model_name}...")
                 try:
                     loaded_model = WhisperModel(
-                        model_name,
+                        actual_model_name,
                         device="cuda" if rp_cuda.is_available() else "cpu",
                         compute_type="float16" if rp_cuda.is_available() else "int8",
                     )
-                    self.models[model_name] = loaded_model
+                    self.models[actual_model_name] = loaded_model
                     model = loaded_model
-                    print(f"Model {model_name} loaded successfully.")
+                    print(f"Model {actual_model_name} loaded successfully.")
                 except Exception as e:
-                    print(f"Error loading model {model_name}: {e}")
-                    raise ValueError(f"Failed to load model {model_name}: {e}") from e
+                    print(f"Error loading model {actual_model_name}: {e}")
+                    raise ValueError(f"Failed to load model {actual_model_name}: {e}") from e
             else:
                 # Model already loaded
-                model = self.models[model_name]
-                print(f"Using already loaded model: {model_name}")
+                model = self.models[actual_model_name]
+                print(f"Using already loaded model: {actual_model_name}")
 
             # Ensure model is loaded before proceeding
             if model is None:
                 raise RuntimeError(
-                    f"Model {model_name} could not be loaded or retrieved."
+                    f"Model {actual_model_name} could not be loaded or retrieved."
                 )
 
         # Model is now loaded and ready, proceed with prediction (outside the lock?)
@@ -180,7 +199,7 @@ class Predictor:
             "transcription": transcription_output,
             "translation": translation_output,
             "device": "cuda" if rp_cuda.is_available() else "cpu",
-            "model": model_name,
+            "model": actual_model_name, 
         }
 
         if word_timestamps:
