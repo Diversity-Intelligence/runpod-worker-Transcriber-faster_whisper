@@ -1,16 +1,20 @@
 from faster_whisper.utils import download_model
 
+# Standard Whisper models
 model_names = [
-    "tiny",
-    "base",
     "small",
     "medium",
-    "large-v1",
     "large-v2",
-    "large-v3",
-    "distil-large-v2",
-    "distil-large-v3",
     "turbo",
+]
+
+# Language override models (HuggingFace model IDs)
+# These are specialized models used when specific languages are detected.
+# IMPORTANT: This list must be kept in sync with LANGUAGE_OVERRIDES in src/predict.py (lines 35-40)
+# When adding a new language override, add the model ID here as well.
+language_override_models = [
+    "ivrit-ai/whisper-large-v3-turbo-ct2",  # Hebrew (he) - from LANGUAGE_OVERRIDES["he"]
+    # Add future language override models here as they're added to LANGUAGE_OVERRIDES in predict.py
 ]
 
 
@@ -23,8 +27,14 @@ def download_model_weights(selected_model):
     print(f"Finished downloading {selected_model}.")
 
 
-# Loop through models sequentially
+# Download standard Whisper models
+print("Downloading standard Whisper models...")
 for model_name in model_names:
     download_model_weights(model_name)
 
-print("Finished downloading all models.")
+# Download language override models (HuggingFace models)
+print("\nDownloading language override models...")
+for model_name in language_override_models:
+    download_model_weights(model_name)
+
+print("\nFinished downloading all models.")

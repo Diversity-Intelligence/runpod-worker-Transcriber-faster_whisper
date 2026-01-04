@@ -7,6 +7,8 @@ RUN rm -f /etc/apt/sources.list.d/*.list
 
 # Set shell and noninteractive environment variables
 SHELL ["/bin/bash", "-c"]
+ENV HF_HOME=/models
+ENV TRANSFORMERS_CACHE=/models
 ENV DEBIAN_FRONTEND=noninteractive
 ENV SHELL=/bin/bash
 
