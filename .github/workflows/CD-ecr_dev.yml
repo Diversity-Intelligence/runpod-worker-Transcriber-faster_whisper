@@ -1,0 +1,59 @@
+name: Build and push to ECR (Development)
+
+on:
+  push:
+    branches:
+      - testing
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  REGION: eu-central-1
+  REPOSITORY: dive-transcriber-dev-ecr
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo docker image prune --all --force
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEV_ECR_ROLE_ARN }}
+          aws-region: ${{ env.REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Delete old images from ECR
+        run: |
+          IMAGE_DIGESTS=$(aws ecr describe-images --region ${{ env.REGION }} --repository-name ${{ env.REPOSITORY }} \
+            --query 'sort_by(imageDetails,&imagePushedAt)[*].imageDigest' --output json)
+          IMAGE_COUNT=$(echo $IMAGE_DIGESTS | jq length)
+          if [ $IMAGE_COUNT -gt 1 ]; then
+            IMAGES_TO_DELETE=$(echo $IMAGE_DIGESTS | jq -r '.[0:-1]')
+            echo $IMAGES_TO_DELETE | jq -r '.[]' | while IFS= read -r digest; do
+              aws ecr batch-delete-image --region ${{ env.REGION }} --repository-name ${{ env.REPOSITORY }} --image-ids imageDigest=$digest
+            done
+          fi
+
+      - name: Build and push Docker image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/${{ env.REPOSITORY }}:$IMAGE_TAG .
+          docker push $REGISTRY/${{ env.REPOSITORY }}:$IMAGE_TAG
