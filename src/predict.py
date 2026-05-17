@@ -18,9 +18,6 @@ from faster_whisper.utils import format_timestamp
 
 # Define available models (for validation)
 AVAILABLE_MODELS = {
-    "small",
-    "medium",
-    "large-v2",
     "turbo",
 }
 
@@ -29,7 +26,7 @@ AVAILABLE_MODELS = {
 # of the user-specified model_name. The override models use faster_whisper with
 # HuggingFace model IDs.
 LANGUAGE_OVERRIDES = {
-    "he": "ivrit-ai/whisper-large-v3-turbo-ct2",
+    "he": "ivrit-ai/whisper-large-v3-turbo-ct2-20250513",
     # Future additions can be added here:
     # "es": "some-spanish-model",
     # "de": "some-german-model",

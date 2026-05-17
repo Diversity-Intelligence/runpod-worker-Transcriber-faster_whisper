@@ -11,17 +11,13 @@ Forked from:
 
 ## Models
 
-- Ivrit-ai
-- tiny
-- base
-- small
-- medium
-- large-v1
-- large-v2
-- large-v3
-- distil-large-v2
-- distil-large-v3
-- turbo
+### Standard (pre-downloaded)
+
+- **turbo** (large-v3-turbo) — recommended for English/Spanish. 809M params, 2-6x faster than large-v2.
+
+### Language Overrides (auto-selected when language is specified)
+
+- **Hebrew (`he`)** — `ivrit-ai/whisper-large-v3-turbo-ct2-20250513`. Fine-tuned on ~5,050 hours of Hebrew, achieves ~5.3% WER on general Hebrew benchmarks.
 
 ## Input
 
@@ -29,7 +25,7 @@ Forked from:
 | ----------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `audio`                             | Path  | URL to Audio file                                                                                                                                                      |
 | `audio_base64`                      | str   | Base64-encoded audio file                                                                                                                                              |
-| `model`                             | str   | Choose a Whisper model. Choices: "tiny", "base", "small", "medium", "large-v1", "large-v2", "large-v3", "distil-large-v2", "distil-large-v3", "turbo". Default: "base" |
+| `model`                             | str   | Choose a Whisper model. Pre-downloaded: "turbo". When `language` is set to a supported override (e.g. "he"), a specialized model is used automatically. Default: "base" |
 | `transcription`                     | str   | Choose the format for the transcription. Choices: "plain_text", "formatted_text", "srt", "vtt". Default: "plain_text"                                                  |
 | `translate`                         | bool  | Translate the text to English when set to True. Default: False                                                                                                         |
 | `translation`                       | str   | Choose the format for the translation. Choices: "plain_text", "formatted_text", "srt", "vtt". Default: "plain_text"                                                    |
