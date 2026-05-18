@@ -74,6 +74,11 @@ INPUT_VALIDATIONS = {
         'required': False,
         'default': True
     },
+    'prompt_reset_on_temperature': {
+        'type': float,
+        'required': False,
+        'default': 0
+    },
     'temperature_increment_on_fallback': {
         'type': float,
         'required': False,

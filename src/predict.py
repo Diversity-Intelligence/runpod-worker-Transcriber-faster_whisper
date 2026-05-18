@@ -26,7 +26,7 @@ AVAILABLE_MODELS = {
 # of the user-specified model_name. The override models use faster_whisper with
 # HuggingFace model IDs.
 LANGUAGE_OVERRIDES = {
-    "he": "ivrit-ai/whisper-large-v3-turbo-ct2-20250513",
+    "he": "ivrit-ai/whisper-large-v3-turbo-ct2",
     # Future additions can be added here:
     # "es": "some-spanish-model",
     # "de": "some-german-model",
@@ -63,6 +63,7 @@ class Predictor:
         suppress_tokens="-1",
         initial_prompt=None,
         condition_on_previous_text=True,
+        prompt_reset_on_temperature=0,
         temperature_increment_on_fallback=0.2,
         compression_ratio_threshold=2.4,
         logprob_threshold=-1.0,
@@ -158,6 +159,7 @@ class Predictor:
                 log_prob_threshold=logprob_threshold,
                 no_speech_threshold=no_speech_threshold,
                 condition_on_previous_text=condition_on_previous_text,
+                prompt_reset_on_temperature=prompt_reset_on_temperature,
                 initial_prompt=initial_prompt,
                 prefix=None,
                 suppress_blank=True,

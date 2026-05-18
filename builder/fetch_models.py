@@ -10,7 +10,7 @@ model_names = [
 # IMPORTANT: This list must be kept in sync with LANGUAGE_OVERRIDES in src/predict.py
 # When adding a new language override, add the model ID here as well.
 language_override_models = [
-    "ivrit-ai/whisper-large-v3-turbo-ct2-20250513",  # Hebrew (he) - from LANGUAGE_OVERRIDES["he"]
+    "ivrit-ai/whisper-large-v3-turbo-ct2",  # Hebrew (he) - from LANGUAGE_OVERRIDES["he"]
     # Add future language override models here as they're added to LANGUAGE_OVERRIDES in predict.py
 ]
 
